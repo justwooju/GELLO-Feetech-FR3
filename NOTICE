@@ -1,0 +1,62 @@
+GELLO-Feetech-FR3
+=================
+
+This project contains original work released under the MIT License (see LICENSE),
+together with material derived from the projects listed below. Each upstream project
+retains its own license; those terms govern the derived material.
+
+
+1. GELLO
+--------
+   https://github.com/wuphilipp/gello_software
+   Copyright (c) 2023 Philipp Wu
+   MIT License
+   Reference commit: fa0407bb15be5c220f0696823dbc3803a657c9c7 (2026-04-07)
+
+   Used from this project:
+     - franka_gello_state_publisher      (leader state publisher, driver replaced)
+     - franka_fr3_arm_controllers        (joint impedance controller, 2 fixes applied)
+     - franka_gripper_manager            (unmodified)
+
+   The FeetechDriver in driver/driver.py implements the DynamixelDriverProtocol
+   interface defined in GELLO's dynamixel/driver.py. The class structure follows that
+   file so the driver is interchangeable with the original.
+
+   Modifications are documented in patches/ and are offered back upstream.
+
+
+2. LeRobot-Anything-U-Arm
+-------------------------
+   https://github.com/MINT-SJTU/LeRobot-Anything-U-Arm
+   MINT-SJTU
+   Apache License 2.0
+   Reference commit: bd31c691e0818367e93a743bb49be4abaaff8b59 (2026-09-02)
+   Paper: arXiv:2509.02437
+
+   Used from this project:
+     - mechanical/Feetech_servo/Config3_STL   (printed leader arm frame)
+     - src/uarm/scripts/Uarm_teleop/Feetech_servo/scservo_sdk   (Feetech servo SDK)
+
+   The STS3215 control table in driver/sts3215.yaml is generated from the address
+   constants in this SDK by driver/gen_sts3215_yaml.py, rather than transcribed by hand.
+
+   No U-Arm ROS 1 node, teleoperation script or follower adapter is used.
+
+   The Apache-2.0 license is declared in the project README. At the reference commit
+   the repository does not carry a LICENSE file.
+
+
+3. franka_ros2
+--------------
+   https://github.com/frankarobotics/franka_ros2
+   Franka Robotics GmbH
+   Apache License 2.0
+
+   Used as a runtime dependency (v3.4.1). Not redistributed here.
+
+
+Trademarks
+----------
+Franka Research 3 and FR3 are products of Franka Robotics GmbH. Feetech and STS3215 are
+products of Feetech RC Model Co. This project is not affiliated with or endorsed by
+either company.

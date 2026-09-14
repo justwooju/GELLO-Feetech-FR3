@@ -1,0 +1,10 @@
+--- a/src/joint_impedance_controller.cpp
++++ b/src/joint_impedance_controller.cpp
+@@ -122,6 +122,7 @@
+     auto_declare<std::string>("arm_id", "");
+     auto_declare<std::vector<double>>("k_gains", {});
+     auto_declare<std::vector<double>>("d_gains", {});
++    auto_declare<double>("k_alpha", 0.99);
+   } catch (const std::exception& e) {
+     fprintf(stderr, "Exception thrown during init stage with message: %s \n", e.what());
+     return CallbackReturn::ERROR;

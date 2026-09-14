@@ -1,0 +1,66 @@
+# 02 — merge duplicate `/**:` blocks in `controllers.yaml`
+
+## Problem
+
+`franka_fr3_arm_controllers/config/controllers.yaml` declares `/**:` twice. YAML keeps
+the last duplicate key, so the first block — which holds every controller's `type` —
+is discarded before ROS sees it.
+
+Symptom:
+
+```
+[ERROR] [controller_manager]: The 'type' param was not defined for 'joint_impedance_controller'.
+```
+
+## Check
+
+```bash
+python3 -c "import yaml; d=yaml.safe_load(open('controllers.yaml')); print(list(d['/**'].keys()))"
+```
+
+Broken file prints `['joint_impedance_controller']`. Fixed file prints
+`['controller_manager', 'joint_impedance_controller']`.
+
+## Replacement
+
+`arm_id` is added at the same time so it is bound during `on_configure` rather than
+having to be set by hand afterwards.
+
+```yaml
+/**:
+  controller_manager:
+    ros__parameters:
+      update_rate: 1000  # Hz
+
+      joint_impedance_controller:
+        type: franka_fr3_arm_controllers/JointImpedanceController
+
+      joint_state_broadcaster:
+        type: joint_state_broadcaster/JointStateBroadcaster
+
+      franka_robot_state_broadcaster:
+        type: franka_robot_state_broadcaster/FrankaRobotStateBroadcaster
+
+  joint_impedance_controller:
+    ros__parameters:
+      arm_id: fr3
+      k_alpha: 0.99
+      k_gains:
+        - 240.0
+        - 240.0
+        - 240.0
+        - 240.0
+        - 100.0
+        - 60.0
+        - 20.0
+      d_gains:
+        - 20.0
+        - 20.0
+        - 20.0
+        - 10.0
+        - 10.0
+        - 10.0
+        - 5.0
+```
+
+Gain values are unchanged from upstream.
