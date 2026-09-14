@@ -8,7 +8,7 @@
 | U-Arm Config3 printed frame | 1 set | base, link1–link7, sitter ×2, sitter_mid, trigger_short |
 | Waveshare Serial Bus Servo Driver Board | 1 | USB ↔ TTL half-duplex |
 | 5 V 4 A supply | 1 | |
-| 608ZZ bearing | 1 | J1, so the arm does not hang off the servo output shaft |
+| 608ZZ bearing | 0 | J1, so the arm does not hang off the servo output shaft |
 
 Print settings used: FDM, wall ≥ 3 mm, infill 40 %.
 
