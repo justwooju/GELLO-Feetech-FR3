@@ -174,14 +174,41 @@ links and breaking the daisy chain is awkward. The zero (`homing_offset`) is wri
 ### Measured on this build
 
 ```yaml
-joint_signs:       [-1, -1, -1, -1, -1, -1, -1]
-assembly_offsets:  [0.0307, 5.6941, 6.0792, 4.1924, 0.1672, 0.2163, 2.9683]  # rad
-gripper_range_rad: [4.0298, 2.3761]   # [closed, open]
+joint_signs:       [1, -1, 1, -1, 1, -1, 1]
+assembly_offsets:  [0.0307, 5.6941, 6.0792, 4.1924, 0.1672, 0.2163, 0.6749]  # rad
+gripper_range_rad: [3.3579, 2.5617]   # [closed, open]
 ```
 
 `joint_signs` differs from GELLO's Franka default `[1, -1, 1, -1, 1, 1, 1]`. Config3 is
 not a scaled replica of the FR3 — it shares the joint topology but not the link
 geometry, so servo mounting direction has to be measured.
+
+### Mirror mode
+
+The roll and yaw joints (J1, J3, J5, J7) are inverted relative to the FR3's own positive
+directions. Mapping them one-to-one is technically correct and awkward to operate: the
+operator faces the robot, so a left turn of the leader reads as a right turn on the
+follower. Inverting those four makes the leader behave like a mirror, which is what the
+hand expects. The pitch joints (J2, J4, J6) stay as they are — up is up either way.
+
+Flipping a sign normally invalidates the offset, but not here. The change in offset is
+`-π(s_new - s_old)`, which is `∓2π` and therefore zero modulo 2π whenever `q_ref = 0`.
+All four roll/yaw joints have `q_ref = 0`, so the offsets carry over unchanged and the
+reference pose does not have to be re-measured.
+
+### J7 neutral offset
+
+`assembly_offsets[6]` puts the leader's neutral wrist at **+45° on the robot**, not 0.
+
+This is FR3 geometry, not a calibration error. In `franka_description`, `link7` carries
+`rpy="0 0 π/4"` and the hand mounts at `-π/4`. With J7 at zero the gripper sits 45° off
+square. Shifting the neutral by 45° lines the gripper up with the leader's grip.
+
+The cost is an asymmetric range — roughly 220° one way and 130° the other, against ±175°
+of joint limit. Enough for normal operation.
+
+`tools/tune_j7.py` adjusts this joint alone. It is relative, so calling it twice adds up;
+`tools/watch_j7.py` reads the current angle live.
 
 ### The π in the offset
 
